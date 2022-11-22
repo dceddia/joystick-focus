@@ -30,12 +30,15 @@ fn main() {
                         .parse()
                         .unwrap_or_default();
 
-                    println!("Focus running? {}", is_focus_app_running());
                     println!("button pressed: {}", button_number);
 
                     match button_number {
                         // Big red button on VKB Gladiator Evo
-                        3 => focus_timed(60),
+                        3 => focus_timed(45),
+                        // Second trigger (full pull)
+                        2 => focus_timed(60),
+                        // A3 hat left
+                        9 => focus_timed(25),
                         _ => {}
                     }
                 }
@@ -55,11 +58,15 @@ fn focus_timed(minutes: u32) {
     cmd.arg(format!("focus://focus?minutes={}", minutes));
 
     if is_focus_app_running() {
+        println!("Beginning focus for {} minutes", minutes);
         cmd.spawn().expect("open failed");
     } else {
+        println!("Focus app is not running, starting up...");
         cmd.spawn().expect("open failed");
+
         // give it time to start, then issue the command again
         std::thread::sleep(Duration::from_secs(2));
+        println!("Beginning focus for {} minutes", minutes);
         cmd.spawn().expect("open failed");
     }
 }
